@@ -1,26 +1,29 @@
 import fs from 'fs';
-import path from 'path';
+import pathLib from 'path';
 import globby from 'globby';
-import types, { ImportDeclaration, ImportSpecifier, } from '@babel/types';
+import types, { ImportDeclaration, ImportSpecifier } from '@babel/types';
 import type { NodePath } from '@babel/core';
 
-type Config = {
-  prefixes: Record<string, string>;
+type ExportsType = Record<string, {
+  dirname: string;
+  file: string;
+}[]>;
+
+type State = {
+  opts: {
+    useDefaultImport?: boolean;
+    prefixes: Record<string, string>;
+  };
 }
 
 const getExportsInDirectory = (dir: string) => {
-  type ExportsType = Record<string, {
-    dirname: string;
-    file: string;
-  }[]>;
-
   const files = globby.sync(`${dir}/**/*.(ts|tsx)`);
   return files.reduce<ExportsType>((acc, file) => {
     const relative = file.replace(dir, '').replace(/\/*/, '');
-    const filename = path.basename(file);
+    const filename = pathLib.basename(file);
     const name = filename.substr(0, filename.lastIndexOf('.'));
     if (name !== 'index') {
-      const dirname = path.dirname(path.dirname(relative));
+      const dirname = pathLib.dirname(pathLib.dirname(relative));
       if (!acc[name]) acc[name] = [];
       acc[name].push({
         dirname,
@@ -31,15 +34,19 @@ const getExportsInDirectory = (dir: string) => {
   }, {});
 }
 
-export default (config: Config) => {
-  const prefixes = Object.keys(config.prefixes).reduce<Record<string, ReturnType<typeof getExportsInDirectory>>>((acc, prefix) => {
-    acc[prefix] = getExportsInDirectory(config.prefixes[prefix]);
-    return acc;
-  }, {});
+export default () => {
+  let prefixes: Record<string, ReturnType<typeof getExportsInDirectory>> = {};
 
   return {
     visitor: {
-      ImportDeclaration(path: NodePath<ImportDeclaration>) {
+      ImportDeclaration(path: NodePath<ImportDeclaration>, state: State) {
+        if (!prefixes) {
+          prefixes = Object.keys(state.opts.prefixes).reduce<Record<string, ReturnType<typeof getExportsInDirectory>>>((acc, prefix) => {
+            acc[prefix] = getExportsInDirectory(pathLib.resolve(state.opts.prefixes[prefix]));
+            return acc;
+          }, {});
+        }
+
         const source = path.node.source.value;
         const matchedPrefix = Object.keys(prefixes).find(p => source.startsWith(p));
         if (!!matchedPrefix) {
@@ -49,7 +56,9 @@ export default (config: Config) => {
           const memberImports = path.node.specifiers.filter(function (specifier) { return specifier.type === 'ImportSpecifier' });
           memberImports.forEach((member: ImportSpecifier) => {
             const importName = member.imported.type === 'StringLiteral' ? member.imported.value : member.imported.name;
-            const importSpecifier = types.importSpecifier(types.identifier(importName), types.identifier(importName));
+            const importSpecifier = state.opts.useDefaultImport
+              ? types.importDefaultSpecifier(types.identifier(importName))
+              : types.importSpecifier(types.identifier(importName), types.identifier(importName));
             const directImport = prefix[importName].filter(e => (
               e.dirname === directory
             ));
