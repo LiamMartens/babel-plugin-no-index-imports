@@ -1,8 +1,11 @@
-import fs from 'fs';
 import pathLib from 'path';
 import globby from 'globby';
 import types, { ImportDeclaration, ImportSpecifier } from '@babel/types';
 import type { NodePath } from '@babel/core';
+
+type PluginType = {
+  types: typeof types;
+}
 
 type ExportsType = Record<string, {
   dirname: string;
@@ -34,8 +37,8 @@ const getExportsInDirectory = (dir: string) => {
   }, {});
 }
 
-export default () => {
-  let prefixes: Record<string, ReturnType<typeof getExportsInDirectory>> | null = null;
+export default ({ types }: PluginType) => {
+  let prefixes: Record<string, ReturnType<typeof getExportsInDirectory>> = {};
 
   return {
     visitor: {
