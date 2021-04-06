@@ -2,6 +2,7 @@
   "name": "babel-plugin-no-index-imports",
   "version": "1.0.0",
   "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.13.14",
@@ -16,5 +17,8 @@
   },
   "scripts": {
     "build": "tsc -p ."
-  }
+  },
+  "files": [
+    "lib"
+  ]
 }
