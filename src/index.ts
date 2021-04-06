@@ -35,7 +35,7 @@ const getExportsInDirectory = (dir: string) => {
 }
 
 export default () => {
-  let prefixes: Record<string, ReturnType<typeof getExportsInDirectory>> = {};
+  let prefixes: Record<string, ReturnType<typeof getExportsInDirectory>> | null = null;
 
   return {
     visitor: {
@@ -52,7 +52,7 @@ export default () => {
         if (!!matchedPrefix) {
           const prefix = prefixes[matchedPrefix];
           const directory = source.substring(matchedPrefix.length).replace(/\/*/, '');
-          const transforms = [];
+          const transforms: ImportDeclaration[] = [];
           const memberImports = path.node.specifiers.filter(function (specifier) { return specifier.type === 'ImportSpecifier' });
           memberImports.forEach((member: ImportSpecifier) => {
             const importName = member.imported.type === 'StringLiteral' ? member.imported.value : member.imported.name;

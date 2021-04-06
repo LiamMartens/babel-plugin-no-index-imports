@@ -4,6 +4,7 @@
     "target": "ES2015",
     "declaration": true,
     "outDir": "./lib",
+    "strictNullChecks": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "lib": [
