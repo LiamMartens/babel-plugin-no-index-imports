@@ -1,0 +1,20 @@
+{
+  "name": "babel-no-index-imports",
+  "version": "1.0.0",
+  "main": "lib/index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.13.14",
+    "@types/babel__core": "^7.1.14",
+    "@types/globby": "^9.1.0",
+    "@types/node": "^14.14.37",
+    "typescript": "^4.2.3"
+  },
+  "dependencies": {
+    "@babel/types": "^7.13.14",
+    "globby": "^11.0.3"
+  },
+  "scripts": {
+    "build": "tsc -p ."
+  }
+}

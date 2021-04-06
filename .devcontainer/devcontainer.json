@@ -1,0 +1,8 @@
+{
+  "name": "babel-no-index-imports",
+  "image": "node:14",
+  "containerUser": "node",
+  "extensions": [
+    "editorconfig.editorconfig"
+  ]
+}
