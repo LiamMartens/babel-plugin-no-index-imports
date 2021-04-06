@@ -38,7 +38,7 @@ const getExportsInDirectory = (dir: string) => {
 }
 
 export default ({ types }: PluginType) => {
-  let prefixes: Record<string, ReturnType<typeof getExportsInDirectory>> = {};
+  let prefixes: Record<string, ReturnType<typeof getExportsInDirectory>> | null = null;
 
   return {
     visitor: {
