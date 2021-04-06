@@ -4,6 +4,24 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "license": "MIT",
+  "author": {
+    "email": "hi@liammartens.com",
+    "name": "Liam Martens",
+    "url": "https://liammartens.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LiamMartens/babel-plugin-no-index-imports"
+  },
+  "keywords": [
+    "babel",
+    "plugin",
+    "import"
+  ],
+  "bugs": {
+    "url": "https://github.com/LiamMartens/babel-plugin-no-index-imports/issues"
+  },
+  "homepage": "https://github.com/LiamMartens/babel-plugin-no-index-imports#readme",
   "devDependencies": {
     "@babel/core": "^7.13.14",
     "@types/babel__core": "^7.1.14",
