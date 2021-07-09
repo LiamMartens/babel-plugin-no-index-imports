@@ -56,16 +56,17 @@ export default ({ types }: PluginType) => {
           const prefix = prefixes[matchedPrefix];
           const directory = source.substring(matchedPrefix.length).replace(/\/*/, '');
           const transforms: ImportDeclaration[] = [];
-          const memberImports = path.node.specifiers.filter(function (specifier) { return specifier.type === 'ImportSpecifier' });
+          const memberImports = path.node.specifiers?.filter(function (specifier) { return specifier.type === 'ImportSpecifier' }) ?? [];
           memberImports.forEach((member: ImportSpecifier) => {
             const importName = member.imported.type === 'StringLiteral' ? member.imported.value : member.imported.name;
             const importSpecifier = state.opts.useDefaultImport
               ? types.importDefaultSpecifier(types.identifier(importName))
               : types.importSpecifier(types.identifier(importName), types.identifier(importName));
-            const directImport = prefix[importName].filter(e => (
+            const directImport = prefix[importName]?.filter(e => (
               e.dirname === directory
-            ));
-            if (directImport.length > 0) {
+              || (directory === '' && e.dirname === '.')
+            )) ?? [];
+            if (directImport && directImport.length > 0) {
               transforms.push(types.importDeclaration(
                 [importSpecifier],
                 types.stringLiteral(directImport[0].file)
