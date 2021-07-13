@@ -16,15 +16,18 @@ type State = {
   opts: {
     useDefaultImport?: boolean;
     prefixes: Record<string, string>;
+    extractName?: (filename: string) => string;
   };
 }
 
-const getExportsInDirectory = (dir: string) => {
+const getExportsInDirectory = (dir: string, extractName?: (filename: string) => string) => {
   const files = globby.sync(`${dir}/**/*.(ts|tsx)`);
   return files.reduce<ExportsType>((acc, file) => {
     const relative = file.replace(dir, '').replace(/\/*/, '');
     const filename = pathLib.basename(file);
-    const name = filename.substr(0, filename.lastIndexOf('.'));
+    const name = extractName
+      ? extractName(filename)
+      : filename.substr(0, filename.lastIndexOf('.'));
     if (name !== 'index') {
       const dirname = pathLib.dirname(pathLib.dirname(relative));
       if (!acc[name]) acc[name] = [];
@@ -45,7 +48,7 @@ export default ({ types }: PluginType) => {
       ImportDeclaration(path: NodePath<ImportDeclaration>, state: State) {
         if (!prefixes) {
           prefixes = Object.keys(state.opts.prefixes).reduce<Record<string, ReturnType<typeof getExportsInDirectory>>>((acc, prefix) => {
-            acc[prefix] = getExportsInDirectory(pathLib.resolve(state.opts.prefixes[prefix]));
+            acc[prefix] = getExportsInDirectory(pathLib.resolve(state.opts.prefixes[prefix]), state.opts.extractName);
             return acc;
           }, {});
         }
