@@ -64,7 +64,6 @@ export default ({ types }: PluginType) => {
         const matchedPrefix = Object.keys(prefixes).find(p => source.startsWith(p));
         if (!!matchedPrefix) {
           const prefix = prefixes[matchedPrefix];
-          const directory = source.substring(matchedPrefix.length).replace(/\/*/, '');
           const transforms: ImportDeclaration[] = [];
           const memberImports = path.node.specifiers?.filter(function (specifier) { return specifier.type === 'ImportSpecifier' }) ?? [];
           memberImports.forEach((member: ImportSpecifier) => {
@@ -72,11 +71,11 @@ export default ({ types }: PluginType) => {
             const importSpecifier = state.opts.useDefaultImport
               ? types.importDefaultSpecifier(types.identifier(importName))
               : types.importSpecifier(types.identifier(importName), types.identifier(importName));
-            const directImport = prefix[importName]?.filter(e => (
-              e.dirname === directory
-              || (directory === '' && e.dirname === '.')
-            )) ?? [];
+            const directImport = prefix[importName]
             if (directImport && directImport.length > 0) {
+              if (directImport.length > 1) {
+                console.warn(`Multiple files in "${[prefix]}" are exporting the module "${importName}"`)
+              }
               transforms.push(types.importDeclaration(
                 [importSpecifier],
                 types.stringLiteral(pathLib.relative(

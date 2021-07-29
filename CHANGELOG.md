@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v1.0.8
+* Don't filter out by directory, just give a warning for duplicate exports for the same prefix
+
 ## v1.0.7
 * Added configurable `extensions`
 
