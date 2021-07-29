@@ -13,8 +13,14 @@ type ExportsType = Record<string, {
 }[]>;
 
 type State = {
+  file: {
+    opts: {
+      filename: string;
+    },
+  },
   opts: {
     useDefaultImport?: boolean;
+    stripFileExtension?: boolean;
     prefixes: Record<string, string>;
     extractName?: (filename: string) => string;
   };
@@ -27,7 +33,7 @@ const getExportsInDirectory = (dir: string, extractName?: (filename: string) => 
     const filename = pathLib.basename(file);
     const name = extractName
       ? extractName(filename)
-      : filename.substr(0, filename.lastIndexOf('.'));
+      : filename.replace(/\.[a-zA-Z_-]+$/, '');
     if (name !== 'index') {
       const dirname = pathLib.dirname(pathLib.dirname(relative));
       if (!acc[name]) acc[name] = [];
@@ -72,7 +78,12 @@ export default ({ types }: PluginType) => {
             if (directImport && directImport.length > 0) {
               transforms.push(types.importDeclaration(
                 [importSpecifier],
-                types.stringLiteral(directImport[0].file)
+                types.stringLiteral(pathLib.relative(
+                  pathLib.dirname(state.file.opts.filename),
+                  state.opts.stripFileExtension === false
+                    ? directImport[0].file
+                    : directImport[0].file.replace(/\.[a-zA-Z_-]+$/, '')
+                ))
               ));
             }
           });

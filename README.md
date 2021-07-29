@@ -25,6 +25,10 @@ Add following config in your `.babelrc`
   "plugins": [
     ["babel-plugin-no-index-imports", {
       "useDefaultImport": false,
+      "stripFileExtension": true,
+      "extractName": function(filename) {
+        return filename.substr(0, filename.lastIndexOf('.'));
+      },
       "prefixes": {
         "@components": "./src/workspaces",
         "@utils": "./src/utils"
