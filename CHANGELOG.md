@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v1.0.9
+* Updated warning
+* Added `selectImport` option
+
 ## v1.0.8
 * Don't filter out by directory, just give a warning for duplicate exports for the same prefix
 

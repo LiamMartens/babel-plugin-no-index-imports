@@ -30,6 +30,9 @@ Add following config in your `.babelrc`
       "extractName": function(filename) {
         return filename.substr(0, filename.lastIndexOf('.'));
       },
+      "selectImport": function(importName, imports, member) {
+        return imports[0];
+      },
       "prefixes": {
         "@components": "./src/workspaces",
         "@utils": "./src/utils"

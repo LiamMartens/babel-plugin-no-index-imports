@@ -24,6 +24,7 @@ type State = {
     stripFileExtension?: boolean;
     prefixes: Record<string, string>;
     extractName?: (filename: string, prefix: string, fullpath: string) => string;
+    selectImport?: (importName: string, exports: ExportsType[string], member: ImportSpecifier) => ExportsType[string][number]
   };
 }
 
@@ -74,15 +75,19 @@ export default ({ types }: PluginType) => {
             const directImport = prefix[importName]
             if (directImport && directImport.length > 0) {
               if (directImport.length > 1) {
-                console.warn(`Multiple files in "${[prefix]}" are exporting the module "${importName}"`)
+                console.warn(`Multiple files in "${matchedPrefix}" are exporting the module "${importName}"`)
               }
+
+              const selectedImport = state.opts.selectImport
+                ? state.opts.selectImport(importName, directImport, member)
+                : directImport[0]
               transforms.push(types.importDeclaration(
                 [importSpecifier],
                 types.stringLiteral(pathLib.relative(
                   pathLib.dirname(state.file.opts.filename),
                   state.opts.stripFileExtension === false
-                    ? directImport[0].file
-                    : directImport[0].file.replace(/\.[a-zA-Z_-]+$/, '')
+                    ? selectedImport.file
+                    : selectedImport.file.replace(/\.[a-zA-Z_-]+$/, '')
                 ))
               ));
             }
