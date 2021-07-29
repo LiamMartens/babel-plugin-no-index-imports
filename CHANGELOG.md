@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v1.0.4
+* Add `prefix` parameter to `extractName` function
+
 ## v1.0.3
 * Change imports to relative
 * Added `stripFileExtension` flag
