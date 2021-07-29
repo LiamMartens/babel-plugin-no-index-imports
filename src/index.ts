@@ -22,17 +22,17 @@ type State = {
     useDefaultImport?: boolean;
     stripFileExtension?: boolean;
     prefixes: Record<string, string>;
-    extractName?: (filename: string, prefix: string) => string;
+    extractName?: (filename: string, prefix: string, fullpath: string) => string;
   };
 }
 
-const getExportsInDirectory = (dir: string, prefix: string, extractName?: (filename: string, prefix: string) => string) => {
+const getExportsInDirectory = (dir: string, prefix: string, extractName?: (filename: string, prefix: string, fullpath: string) => string) => {
   const files = globby.sync(`${dir}/**/*.(ts|tsx)`);
   return files.reduce<ExportsType>((acc, file) => {
     const relative = file.replace(dir, '').replace(/\/*/, '');
     const filename = pathLib.basename(file);
     const name = extractName
-      ? extractName(filename, prefix)
+      ? extractName(filename, prefix, file)
       : filename.replace(/\.[a-zA-Z_-]+$/, '');
     if (name !== 'index') {
       const dirname = pathLib.dirname(pathLib.dirname(relative));
