@@ -29,7 +29,7 @@ type State = {
 const getExportsInDirectory = (dir: string, prefix: string, extractName?: (filename: string, prefix: string, fullpath: string) => string) => {
   const files = globby.sync(`${dir}/**/*.(ts|tsx)`);
   return files.reduce<ExportsType>((acc, file) => {
-    const relative = file.replace(dir, '').replace(/\/*/, '');
+    const relative = pathLib.relative(dir, file);
     const filename = pathLib.basename(file);
     const name = extractName
       ? extractName(filename, prefix, file)

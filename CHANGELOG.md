@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v1.0.6
+* Updated relative folder code
+
 ## v1.0.5
 * Added `fullpath` parameter to `extractName` function
 
