@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v1.0.7
+* Added configurable `extensions`
+
 ## v1.0.6
 * Updated relative folder code
 

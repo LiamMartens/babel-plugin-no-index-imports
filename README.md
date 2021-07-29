@@ -24,6 +24,7 @@ Add following config in your `.babelrc`
 {
   "plugins": [
     ["babel-plugin-no-index-imports", {
+      "extensions": ["js", "jsx", "ts", "tsx"],
       "useDefaultImport": false,
       "stripFileExtension": true,
       "extractName": function(filename) {
