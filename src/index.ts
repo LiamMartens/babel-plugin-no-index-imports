@@ -78,18 +78,18 @@ export default ({ types }: PluginType) => {
                 console.warn(`Multiple files in "${matchedPrefix}" are exporting the module "${importName}"`)
               }
 
-              const selectedImport = state.opts.selectImport
-                ? state.opts.selectImport(importName, directImport, member)
-                : directImport[0]
-              transforms.push(types.importDeclaration(
-                [importSpecifier],
-                types.stringLiteral(pathLib.relative(
-                  pathLib.dirname(state.file.opts.filename),
-                  state.opts.stripFileExtension === false
-                    ? selectedImport.file
-                    : selectedImport.file.replace(/\.[a-zA-Z_-]+$/, '')
-                ))
-              ));
+              if (state.opts.selectImport) {
+                const selectedImport = state.opts.selectImport(importName, directImport, member)
+                transforms.push(types.importDeclaration(
+                  [importSpecifier],
+                  types.stringLiteral(pathLib.relative(
+                    pathLib.dirname(state.file.opts.filename),
+                    state.opts.stripFileExtension === false
+                      ? selectedImport.file
+                      : selectedImport.file.replace(/\.[a-zA-Z_-]+$/, '')
+                  ))
+                ));
+              }
             }
           });
           if (transforms.length > 0) {

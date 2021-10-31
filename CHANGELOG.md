@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v1.0.10
+* Fixed issue with `selectImport` being undefined breaking the build
+
 ## v1.0.9
 * Updated warning
 * Added `selectImport` option
