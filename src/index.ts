@@ -28,24 +28,27 @@ type State = {
   };
 }
 
-type ExtractNameFn = (filename: string, prefix: string, fullpath: string) => string | null
+type ExtractNameFn = (filename: string, prefix: string, fullpath: string) => string | string[] | null
 
 const getExportsInDirectory = (dir: string, prefix: string, extensions: string[], extractName?: ExtractNameFn) => {
   const files = globby.sync(`${dir}/**/*.(${extensions.join('|')})`);
   return files.reduce<ExportsType>((acc, file) => {
     const relative = pathLib.relative(dir, file);
     const filename = pathLib.basename(file);
-    const name = extractName
+    const nameOrNames = extractName
       ? extractName(filename, prefix, file)
       : filename.replace(/\.[a-zA-Z_-]+$/, '');
-    if (name !== null && name !== 'index') {
-      const dirname = pathLib.dirname(pathLib.dirname(relative));
-      if (!acc[name]) acc[name] = [];
-      acc[name].push({
-        dirname,
-        file,
-      });
-    }
+    const names = typeof nameOrNames === 'string' ? [nameOrNames] : nameOrNames
+    names?.forEach((name) => {
+      if (name !== null && name !== 'index') {
+        const dirname = pathLib.dirname(pathLib.dirname(relative));
+        if (!acc[name]) acc[name] = [];
+        acc[name].push({
+          dirname,
+          file,
+        });
+      }
+    })
     return acc;
   }, {});
 }

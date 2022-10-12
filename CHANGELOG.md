@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v1.1.0
+* Allow returning an array of names from the `extractName` function
+
 ## v1.0.12
 * Revert back to `globby@^11`
 
