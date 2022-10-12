@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v1.0.11
+* Allow ignoring files
+
 ## v1.0.10
 * Fixed issue with `selectImport` being undefined breaking the build
 
