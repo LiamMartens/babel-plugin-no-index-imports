@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v1.0.12
+* Revert back to `globby@^11`
+
 ## v1.0.11
 * Allow ignoring files
 

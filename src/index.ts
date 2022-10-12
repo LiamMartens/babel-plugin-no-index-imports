@@ -1,6 +1,6 @@
 import pathLib from 'path';
 import types, { ImportDeclaration, ImportSpecifier } from '@babel/types';
-import { globbySync } from 'globby';
+import globby from 'globby';
 import type { NodePath } from '@babel/core';
 
 type PluginType = {
@@ -31,7 +31,7 @@ type State = {
 type ExtractNameFn = (filename: string, prefix: string, fullpath: string) => string | null
 
 const getExportsInDirectory = (dir: string, prefix: string, extensions: string[], extractName?: ExtractNameFn) => {
-  const files = globbySync(`${dir}/**/*.(${extensions.join('|')})`);
+  const files = globby.sync(`${dir}/**/*.(${extensions.join('|')})`);
   return files.reduce<ExportsType>((acc, file) => {
     const relative = pathLib.relative(dir, file);
     const filename = pathLib.basename(file);
